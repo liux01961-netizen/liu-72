@@ -33,6 +33,7 @@ def index():
     link += "<a href=/account>Post傳值</a><hr>"
     link += "<a href=/math2>次方根號計算</a><hr>"
     link += "<a href=/read>讀取Firestore資料</a><hr>"
+    link += "<a href=/read2>靜宜資管查詢</a><hr>"
     link += "<a href=/spider1>爬取子青老師本學期課程</a><br>"
     return link
 
@@ -51,22 +52,31 @@ def spider1():
     return R
 
 
-@app.route("/read2")
+@app.route("/read2", methods=["GET", "POST"])
 def read2():
+    # 取得前端 input name="keyword" 的值
+    keyword = request.values.get("keyword")
     Result = ""
-    keyword = "康"
-    db = firestore.client()
-    collection_ref = db.collection("靜宜資管2026B")
-    docs = collection_ref.get()
-    for doc in docs:
-       teacher = doc.to_dict()
-       if keyword in teacher["name"]:
-           Result += str(teacher) + "<br>"  
+   
+    if keyword:
+        db = firestore.client()
+        # 讀取集合
+        collection_ref = db.collection("靜宜資管2026B")
+        docs = collection_ref.get()
+       
+        for doc in docs:
+            teacher = doc.to_dict()
+            name = teacher.get("name", "")
+            # 比對：如果輸入的姓氏在名字裡面
+            if keyword in name:
+                Result += f"找到老師：{name}<br>"
+       
+        if Result == "":
+            Result = f"找不到姓氏包含「{keyword}」的老師"
+           
+    # 將 Result 傳回給 read2.html
+    return render_template("read2.html", Result=Result)
 
-    if Result == "":
-        Result = "抱歉，查無此關鍵字姓名老師資料"
-    return Result
-    return render_template("read2.html")
              
 @app.route("/read")
 def read():
