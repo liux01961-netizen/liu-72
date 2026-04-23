@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>老師查詢</title>
+    <style>
+        /* 根據老師範例設計的樣式 */
+        .result-title { font-weight: bold; font-size: 20px; margin-top: 20px; }
+        .teacher-info { color: black; font-weight: bold; font-size: 16px; text-decoration: none; }
+        .divider { border-top: 1px solid #ccc; margin: 15px 0; }
+    </style>
+</head>
+<body>
+    <h1>靜宜資管老師查詢</h1>
+   
+    <form method="post">
+        請輸入姓名關鍵字：
+        <input type="text" name="teacher" value="{{ keyword if keyword else '' }}">
+        <button type="submit">查詢</button>
+    </form>
+
+    <div class="divider"></div>
+
+    {% if teachers %}
+        <p class="result-title">查詢結果 (關鍵字: {{ keyword }}):</p>
+       
+        {% for t in teachers %}
+            <div style="margin-bottom: 20px;">
+                <p class="teacher-info">
+                    {{ t.name }} 老師的研究室是在 {{ t.lab }}
+                </p>
+                <div class="divider"></div>
+            </div>
+        {% endfor %}
+    {% elif keyword %}
+        <p>找不到姓氏或姓名包含「{{ keyword }}」的老師。</p>
+    {% endif %}
+
+    <br>
+    <a href="/">返回首頁</a>
+</body>
+</html>
